@@ -36,6 +36,24 @@ module.exports.register = (app, database) => {
         }
     })
 
+      //API call to tasks of a single user by ID 
+    app.get("/api/users/:id", async (req,res) => {
+        try {
+            let id = req.params.id;
+            let query;
+            query = database.query("SELECT * FROM tasks WHERE user_id = ?",[id])
+            const records = await query;
+
+            if(records.length === 0){
+                return res.status(404).json({message: "User not found"});
+            }
+            res.status(200).send(JSON.stringify(records)).end();
+        } catch (error) {
+            console.error("Database query failed:", error);
+            res.status(500).json({message: "An error ocurred while looking for the user"});
+        }
+    })
+
     //API call to retrieve a single user by userName
     app.get("/api/users/name/:name", async (req,res) =>{
         try {
