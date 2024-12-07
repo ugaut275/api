@@ -1,0 +1,30 @@
+{
+  "name": "REST-and-MySQL-example",
+  "description": "Code sample for running REST APIs on Node.js with a mysql database",
+  "version": "0.0.2",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Yasaman Amannejad",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yasaman-A/rest-API-examples"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha --exit test/*.test.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "promise-mysql": "^4.0.0",
+    "prompt": "^1.0.0",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "mocha": "^8.1.3",
+    "supertest": "^6.0.0"
+  }
+}
