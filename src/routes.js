@@ -37,7 +37,7 @@ module.exports.register = (app, database) => {
     })
 
       //API call to tasks of a single user by ID 
-    app.get("/api/users/:id", async (req,res) => {
+    app.get("/api/tasks/:id", async (req,res) => {
         try {
             let id = req.params.id;
             let query;
