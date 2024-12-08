@@ -175,6 +175,37 @@ module.exports.register = (app, database) => {
         });
     }
 });
+app.delete("/api/tasks/:taskID", async (req, res) => {
+    const { taskID } = req.params;
+
+    if (!taskID) {
+        return res.status(400).json({
+            message: "Please provide a taskID."
+        });
+    }
+
+    try {
+        const result = await database.query(
+            `DELETE FROM tasks WHERE taskID = ?`,
+            [taskID]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Task not found"
+            });
+        }
+
+        res.status(200).json({
+            message: "Task deleted successfully"
+        });
+    } catch (error) {
+        console.error("Error deleting task:", error);
+        res.status(500).json({
+            message: "An error occurred while deleting the task"
+        });
+    }
+});
 
 
 }
