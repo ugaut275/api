@@ -207,5 +207,35 @@ app.delete("/api/tasks/:taskID", async (req, res) => {
     }
 });
 
+app.put("api/tasks/:taskID", async (req, res) =>{
+    const  { taskID }  = req.params;
+    const  { status } = req.body;
+    if(!taskID){
+        return res.status(400).json({
+        message : "No ID found"
+        });
+    }
+    try{
+        const result = await database.query(
+            `UPDATE tasks set status = ? Where taskID = ?`,[status, taskID]
+            );
+         if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: "Task not found"
+            });
+        }
+          res.status(200).json({
+            message: "Task deleted successfully"
+          
+        });
+    }
+    catch(error){
+      res.status(500).json({
+            message: "An error occurred while deleting the task"
+        });
+    }
+}
+    
+
 
 }
