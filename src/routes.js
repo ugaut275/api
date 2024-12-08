@@ -139,4 +139,42 @@ module.exports.register = (app, database) => {
         }
     })
 
+    app.post("/api/tasks", async (req, res) => {
+    const { user_id, title, description, priority, status, due_date } = req.body;
+
+    if (!user_id || !title || !priority || !status || !due_date) {
+        return res.status(400).json({
+            message: "Please provide user_id, title, priority, status, and due_date fields."
+        });
+    }
+
+    try {
+        const result = await database.query(
+            `INSERT INTO tasks (user_id, title, description, priority, status, due_date) 
+            VALUES (?, ?, ?, ?, ?, ?)`,
+            [user_id, title, description, priority, status, due_date]
+        );
+
+       
+        res.status(201).json({
+            message: "Task added successfully",
+            task: {
+                taskID: result.insertId,
+                user_id,
+                title,
+                description,
+                priority,
+                status,
+                due_date
+            }
+        });
+    } catch (error) {
+        console.error("Error adding task:", error);
+        res.status(500).json({
+            message: "An error occurred while adding the task"
+        });
+    }
+});
+
+
 }
