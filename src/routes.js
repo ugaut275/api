@@ -109,22 +109,24 @@ module.exports.register = (app, database) => {
 
     // Add a new reminder
     app.post("/api/reminders", async (req, res) => {
-        const { reminder_id, taskID, reminder_time, created_at } = req.body;
-        if (!reminder_id || !taskID || !reminder_time || !created_at) {
+        const {taskID, reminder_time} = req.body;
+        if (!taskID || !reminder_time) {
             return res.status(400).json({
-                message: "All fields (reminder_id, taskID, reminder_time, created_at) are required.",
+                message: "The fields (taskID, reminder_time) are required.",
             });
         }
 
         try {
             await database.query(
-                "INSERT INTO reminders (reminder_id, taskID, reminder_time, created_at) VALUES (?, ?, ?, ?)",
-                [reminder_id, taskID, reminder_time, created_at]
+                "INSERT INTO reminders (taskID, reminder_time) VALUES (?, ?)",
+                [taskID, reminder_time]
             );
             res.status(201).json({ message: "Reminder added successfully" });
         } catch (error) {
             console.error("Error adding reminder:", error);
-            res.status(500).json({ message: "An error occurred while adding the reminder." });
+            res.status(500).json({ 
+                message: "An error occurred while adding the reminder.", error: error
+            });
         }
     });
 
@@ -190,6 +192,38 @@ module.exports.register = (app, database) => {
             res.status(500).json({ message: "An error occurred while deleting the task." });
         }
     });
+
+    // Delete a reminder
+app.delete("/api/reminders/:reminder_id", async (req, res) => {
+    const { reminder_id } = req.params;
+
+    if (!reminder_id) {
+        return res.status(400).json({
+            message: "reminder_id is required.",
+        });
+    }
+
+    try {
+        const result = await database.query(
+            "DELETE FROM reminders WHERE reminder_id = ?",
+            [reminder_id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: `Reminder with id ${reminder_id} not found.`,
+            });
+        }
+
+        res.status(200).json({ message: "Reminder deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting reminder:", error);
+        res.status(500).json({
+            message: "An error occurred while deleting the reminder.",
+            error: error,
+        });
+    }
+});
 
     app.post("/api/verify-password", async (req, res) => {
         const { password, hash } = req.body;
