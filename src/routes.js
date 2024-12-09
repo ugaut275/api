@@ -191,3 +191,35 @@ module.exports.register = (app, database) => {
         }
     });
 };
+
+// Delete a reminder
+app.delete("/api/reminders/:reminder_id", async (req, res) => {
+    const { reminder_id } = req.params;
+
+    if (!reminder_id) {
+        return res.status(400).json({
+            message: "reminder_id is required.",
+        });
+    }
+
+    try {
+        const result = await database.query(
+            "DELETE FROM reminders WHERE reminder_id = ?",
+            [reminder_id]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                message: `Reminder with id ${reminder_id} not found.`,
+            });
+        }
+
+        res.status(200).json({ message: "Reminder deleted successfully" });
+    } catch (error) {
+        console.error("Error deleting reminder:", error);
+        res.status(500).json({
+            message: "An error occurred while deleting the reminder.",
+            error: error,
+        });
+    }
+});
