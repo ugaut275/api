@@ -122,7 +122,9 @@ module.exports.register = (app, database) => {
             res.status(201).json({ message: "Reminder added successfully" });
         } catch (error) {
             console.error("Error adding reminder:", error);
-            res.status(500).json({ message: "An error occurred while adding the reminder." });
+            res.status(500).json({ 
+                message: "An error occurred while adding the reminder. \n Error:" + error
+            });
         }
     });
 
