@@ -1,4 +1,5 @@
 module.exports.register = (app, database) => {
+    const bcrypt = require("bcrypt");
     // Root Route
     app.get('/', async (req, res) => {
         res.status(200).send("This is running!");
@@ -68,9 +69,10 @@ module.exports.register = (app, database) => {
         }
 
         try {
+            const hashedPassword = await bcrypt.hash(password,10);
             await database.query(
                 "INSERT INTO user (id, userName, userEmail, password) VALUES (?, ?, ?, ?)",
-                [id, userName, userEmail, password]
+                [id, userName, userEmail, hashedPassword]
             );
             res.status(201).json({ message: "User added successfully" });
         } catch (error) {
@@ -186,6 +188,25 @@ module.exports.register = (app, database) => {
         } catch (error) {
             console.error("Error deleting task:", error);
             res.status(500).json({ message: "An error occurred while deleting the task." });
+        }
+    });
+
+    app.post("/api/verify-password", async (req, res) => {
+        const { password, hash } = req.body;
+        if (!password || !hash) {
+            return res.status(400).json({ message: "Password and hash are required." });
+        }
+    
+        try {
+            const match = await bcrypt.compare(password, hash);
+            if (match) {
+                res.status(200).json({ message: "Password is valid" });
+            } else {
+                res.status(401).json({ message: "Invalid password" });
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "An error occurred during password verification." });
         }
     });
 };
