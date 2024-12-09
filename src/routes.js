@@ -107,17 +107,17 @@ module.exports.register = (app, database) => {
 
     // Add a new reminder
     app.post("/api/reminders", async (req, res) => {
-        const { reminder_id, taskID, reminder_time, created_at } = req.body;
-        if (!reminder_id || !taskID || !reminder_time || !created_at) {
+        const {taskID, reminder_time} = req.body;
+        if (!taskID || !reminder_time) {
             return res.status(400).json({
-                message: "All fields (reminder_id, taskID, reminder_time, created_at) are required.",
+                message: "The fields (taskID, reminder_time) are required.",
             });
         }
 
         try {
             await database.query(
-                "INSERT INTO reminders (reminder_id, taskID, reminder_time, created_at) VALUES (?, ?, ?, ?)",
-                [reminder_id, taskID, reminder_time, created_at]
+                "INSERT INTO reminders (taskID, reminder_time) VALUES (?, ?)",
+                [taskID, reminder_time]
             );
             res.status(201).json({ message: "Reminder added successfully" });
         } catch (error) {
