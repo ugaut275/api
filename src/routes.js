@@ -190,9 +190,8 @@ module.exports.register = (app, database) => {
             res.status(500).json({ message: "An error occurred while deleting the task." });
         }
     });
-};
 
-// Delete a reminder
+    // Delete a reminder
 app.delete("/api/reminders/:reminder_id", async (req, res) => {
     const { reminder_id } = req.params;
 
@@ -223,3 +222,4 @@ app.delete("/api/reminders/:reminder_id", async (req, res) => {
         });
     }
 });
+};
